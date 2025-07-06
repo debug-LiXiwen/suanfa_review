@@ -13,8 +13,12 @@ public class p29_最小的K个数 {
 
     public static void main(String[] args) {
         p29_最小的K个数 a = new p29_最小的K个数();
-        int[] arr = {4,5,1,6,2,7,3,8};
-        ArrayList<Integer> list = a.GetLeastNumbers_Solution(arr, 4);
+//        int[] arr = {4,5,1,6,2,7,3,8};
+//        ArrayList<Integer> list = a.GetLeastNumbers_Solution(arr, 4);
+//        list.forEach(x -> System.out.print(x + " "));
+
+        int[] arr1 = {49, 38, 65, 97, 76, 13, 49};
+        ArrayList<Integer> list = a.GetLeastNumbers_Solution5(arr1, 2);
         list.forEach(x -> System.out.print(x + " "));
     }
 
@@ -170,6 +174,79 @@ public class p29_最小的K个数 {
         }
         a[low] = x;
         return low;
+    }
+
+    public ArrayList<Integer> GetLeastNumbers_Solution5(int [] input, int k) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        if (k <= 0 || k > input.length) {
+            return res;
+        }
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
+        for (int i = 0; i < input.length; i++) {
+            queue.offer(input[i]);
+        }
+        for (int i = 0; i < input.length; i++) {
+            res.add(queue.poll());
+        }
+        return res;
+    }
+
+    public ArrayList<Integer> GetLeastNumbers_Solution4(int [] input, int k) {
+        ArrayList<Integer> list = new ArrayList<>();
+        if (input == null || k <= 0 || k > input.length) {
+            return list;
+        }
+        int[] target = new int[k];
+        // 1. 构建最小堆
+        for (int i = 0; i < k; i++) {
+            target[i] = input[i];
+            heapInsert1(target, i, target[i]);
+        }
+        for (int i = k; i < input.length; i++) {
+            if (input[i] > target[0]) {
+                heapSiftDown1(target, i, k);
+            }
+        }
+        for (int i : input) {
+            System.out.print(i);
+        }
+
+        return list;
+    }
+
+    private void heapSiftDown1(int[] input, int i, int heapSize) {
+        int half = heapSize >>> 1;
+        int x = input[i];
+        while (i < half) {
+            int child = (i << 1) + 1;
+            int c = input[child];
+            int right = child + 1;
+            if (right < heapSize && input[right] < input[child]) {
+                c = input[child = right];
+            }
+            if (x <= c) {
+                break;
+            }
+            input[i] = c;
+            i = child;
+        }
+        input[i] = x;
+    }
+
+    private void heapInsert1(int[] target, int i, int x) {
+        while (i > 0) {
+            int parent = (i - 1) >>> 1;
+            // 如果新数字 > 父节点，跳出，不用交换
+            if (x > target[parent]) {
+                break;
+            }
+            // 往下拉，避免直接上浮覆盖前面的值,
+            // 否则，让新数字位置 = 父节点值，更新k，让父节点 = x，较大的那个值。
+            target[i] = target[parent];
+            i = parent;
+        }
+        target[i] = x;
     }
 
 }
